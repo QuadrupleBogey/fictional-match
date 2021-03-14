@@ -6,7 +6,6 @@ Play with other players and share your match staticstics with other players.
  * Java
  * Maven
  * Docker
- * Elastic
  
 ## Deploy:
 
