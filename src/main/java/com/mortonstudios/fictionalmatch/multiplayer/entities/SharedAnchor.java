@@ -1,5 +1,11 @@
 package com.mortonstudios.fictionalmatch.multiplayer.entities;
 
+/**
+ * SharedAnchor for holding positioning information of an in game piece
+ *
+ * @author Cam
+ * @since 1.0.0
+ */
 public class SharedAnchor {
 
     // Positioning
@@ -9,7 +15,7 @@ public class SharedAnchor {
     private float W;
 
     public SharedAnchor() {
-        super();
+        // Doesn't do a lot
     }
 
     public SharedAnchor(final float x, final float y, final float z, final float w) {

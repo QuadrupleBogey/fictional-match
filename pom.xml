@@ -10,8 +10,8 @@
 	</parent>
 	<groupId>com.mortonstudios</groupId>
 	<artifactId>fictionalmatch</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>fictionalmatch</name>
+	<version>1.0.0</version>
+	<name>fictional-match</name>
 	<description>Match Server with integrations to record match info and server metadata</description>
 
 	<properties>
@@ -23,13 +23,9 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -38,6 +34,16 @@
 		<dependency>
 			<groupId>org.springframework.session</groupId>
 			<artifactId>spring-session-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.10.10</version>
 		</dependency>
 
 		<dependency>
