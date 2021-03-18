@@ -12,12 +12,12 @@ import java.util.Map;
 public class Player {
 
     private String userName;
-    private List<Unit> army;
+    private Map<String, Unit> army;
     private int victoryPoints = 0;
     private int commandPoints = 0;
     private int turn = 0;
 
-    public Player(String userName, List<Unit> army, int victoryPoints, int commandPoints, int turn) {
+    public Player(String userName, Map<String, Unit> army, int victoryPoints, int commandPoints, int turn) {
         this.userName = userName;
         this.army = army;
         this.victoryPoints = victoryPoints;
@@ -29,7 +29,7 @@ public class Player {
         // does nothing
     }
 
-    public Player(String userName, List<Unit> army) {
+    public Player(String userName, Map<String, Unit> army) {
         this.setUserName(userName);
         this.army = army;
     }
@@ -42,11 +42,11 @@ public class Player {
         this.userName = userName;
     }
 
-    public List<Unit> getArmy() {
+    public Map<String, Unit> getArmy() {
         return this.army;
     }
 
-    public void setArmy(List<Unit> army) {
+    public void setArmy(Map<String, Unit> army) {
         this.army = army;
     }
 
@@ -95,8 +95,11 @@ public class Player {
 
     @Override
     public String toString() {
-        return "{ \"userName\": " + this.getUserName() + ", \"army\": " + this.getArmy().toString() +
-                ", \"commandPoints\": " + this.getCommandPoints() + ", \"victoryPoints\": " + this.getVictoryPoints()
-                + ", \"turn\": " + this.getTurn() + " }";
+        return "{\"army\"=" + this.getArmy().toString()
+                + ", \"commandPoints\"=" + this.getCommandPoints()
+                + ", \"turn\"=" + this.getTurn()
+                + ", \"userName\"=\"" + this.getUserName()
+                + "\", \"victoryPoints\"=" + this.getVictoryPoints()
+                + "}";
     }
 }

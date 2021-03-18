@@ -8,6 +8,7 @@ import com.mortonstudios.fictionalmatch.multiplayer.entities.Unit;
 import com.mortonstudios.fictionalmatch.multiplayer.repo.GameManager;
 import com.mortonstudios.fictionalmatch.utils.exceptions.NoAnchorFoundException;
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
@@ -22,7 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Subscription based updates
+ * Subscription based updates to players armies and their positions.
+ * In order to do this it makes use of {@link SharedAnchor} entities
+ * to render a model in a "real world" position for their opponent.
+ *
+ * This is a Controller that utilises websockets to keep players
+ * up to date with out them having to poll the server.
  *
  * @author Cam
  * @since 1.0.0
@@ -32,13 +38,23 @@ public class SharedAnchors {
 
     final private GameManager repository = GameManager.getInstance();
 
+    /**
+     * @return all of the current game information
+     */
     @SubscribeMapping("/all")
     public Map<String, Player> getAll() {
         return this.repository.getRepository();
     }
 
-//    @GetMapping("/{player}/all")
-    public List<Unit> getAllPlayersPositions(@PathVariable final String player) {
+    /**
+     * Returns all of the selected players unit positions.
+     *
+     * @param player uuid of the player in the game
+     * @return returns all of their {@link Unit} information
+     */
+    @MessageMapping("/all/{player}/positions")
+    @SendTo("/topics/{player}/positions")
+    public Map<String, Unit> getAllPlayersPositions(@DestinationVariable final String player) {
         try {
             Player playerObj = repository.getRepository().get(player);
             if (playerObj != null) {
@@ -49,38 +65,55 @@ public class SharedAnchors {
         } catch (final NoAnchorFoundException exception) {
             exception.printStackTrace();
         }
-        return new ArrayList<>();
-    }
-
-    // Returns the players UUID, which is essentially who they are to the match
-    @MessageMapping("/newPlayer")
-    @SendTo("/topics/newPlayers")
-    public String newPlayer(final Player playObj) {
-        System.out.println("Player: " + playObj.toString());
-        String player = UUID.randomUUID().toString();
-        System.out.println("PlayerID: " + player);
-        repository.getRepository().put(player, playObj);
-        return player;
-    }
-
-//    @MessageMapping("/game")
-//    @SendTo("/topics/players")
-//    @PutMapping("/{player}/updateModelPosition/{id}")
-    public SharedAnchor editAnchor(
-        @RequestBody final Unit newUnit, @PathVariable final String player,
-        @PathVariable final String id
-    ) {
-        repository.getRepository().get(player).getArmy().add(newUnit);
-        return newUnit;
+        return new HashMap<>();
     }
 
     /**
+     * Adds a new player into the game, accessible from the all subscription
+     *
+     * @param player uuid of the player
+     * @param playObj all of the associated player information
+     * @return The updated repository
+     */
+    @MessageMapping("/join-as/{player}")
+    @SendTo("/topics/all")
+    public Map<String, Player> newPlayer(@DestinationVariable String player, final Player playObj) {
+        repository.getRepository().put(player, playObj);
+        return repository.getRepository();
+    }
+
+    /**
+     * Updates the position of a certain unit with in a players army
+     *
+     * @param playerID uuid of the {@link Player}
+     * @param unitID uuid of the {@link Unit}
+     * @param newUnit an updated {@link Unit}
+     * @return The updated repository
+     */
+    @MessageMapping("/{playerID}/update/{unitID}")
+    @SendTo("/topics/all")
+    public Map<String, Player> editAnchor(@DestinationVariable final String playerID,
+                           @DestinationVariable final String unitID,
+                           Unit newUnit
+    ) {
+        System.out.println("PlayerID" + playerID);
+        System.out.println("UnitID" + unitID);
+        repository.getRepository().get(playerID).getArmy().replace(unitID, newUnit);
+        return repository.getRepository();
+    }
+
+    /**
+     * Declares that certain unit in a players army has been destroyed
+     *
      * @param player who is model has been destroyed
      * @param id position in the index of the model
+     * @return The updated repository
      */
-    @DeleteMapping("/{player}/{id}")
-    public void deleteEmployee(@PathVariable final String player, @PathVariable final int id) {
+    @DeleteMapping("/{player}/destroy/{id}")
+    @SendTo("/topics/all")
+    public Map<String, Player> destroyUnit(@PathVariable final String player, @PathVariable final String id) {
         repository.getRepository().get(player).getArmy().get(id).setDestroyed(true);
+        return repository.getRepository();
     }
 
 }

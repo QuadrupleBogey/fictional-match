@@ -1,7 +1,8 @@
 package com.mortonstudios.fictionalmatch.multiplayer.entities;
 
 /**
- * Unit is the class that holders information on
+ * Unit is the class that holds all of the positional data and rendering
+ * information of a unit within a players army
  *
  * @author Cam
  * @since 1.0.0
@@ -16,10 +17,10 @@ public class Unit extends SharedAnchor {
      * @param x position
      * @param y position
      * @param z position
-     * @param w
-     * @param destroyed
-     * @param points
-     * @param name
+     * @param w rotation
+     * @param destroyed has this model been removed from table top?
+     * @param points cost of the model (for metrics)
+     * @param name helper for deciding which model to render in app
      */
     public Unit(float x, float y, float z, float w, boolean destroyed, int points, String name) {
         super(x, y, z, w);
@@ -30,7 +31,7 @@ public class Unit extends SharedAnchor {
 
     public Unit() {
         super();
-        // Doesn't do alot
+        // Doesn't do a lot
     }
 
     public boolean isDestroyed() {

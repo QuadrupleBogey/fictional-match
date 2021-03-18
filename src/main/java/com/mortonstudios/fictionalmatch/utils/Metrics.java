@@ -5,7 +5,10 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Minutes;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Metrics for calculating interesting statistics from the match
@@ -29,12 +32,13 @@ public class Metrics {
         return INSTANCE;
     }
 
-    public float percentageOfArmyListDestroyed(final List<Unit> army) {
-        return Float.valueOf(this.totalPointsLost(army)) / Float.valueOf(army.stream().mapToInt(Unit::getPoints).sum());
+    public float percentageOfArmyListDestroyed(final Map<String, Unit> army) {
+        return (float) this.totalPointsLost(army) /
+                (float) new ArrayList<>(army.values()).stream().mapToInt(Unit::getPoints).sum();
     }
 
-    public int totalPointsLost(final List<Unit> army) {
-        return army.stream().filter(Unit::isDestroyed).mapToInt(Unit::getPoints).sum();
+    public int totalPointsLost(final Map<String, Unit> army) {
+        return new ArrayList<>(army.values()).stream().filter(Unit::isDestroyed).mapToInt(Unit::getPoints).sum();
     }
 
     public String totalPlayedTime(final DateTime currentTime) {

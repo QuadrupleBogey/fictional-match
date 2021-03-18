@@ -86,7 +86,7 @@ public class GameManager {
 
         for(String playerID : playerIDs) {
             Player player = this.getRepository().get(playerID);
-            List<Unit> playersArmy = player.getArmy();
+            Map<String, Unit> playersArmy = player.getArmy();
             JSONObject playerObject = new JSONObject();
             playerObject.put("id", playerID);
             playerObject.put("totalPointsLost", this.metrics.totalPointsLost(playersArmy));

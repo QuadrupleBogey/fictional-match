@@ -1,3 +1,3 @@
 FROM openjdk
 
-COPY ./target/
+COPY ./target/*.jar 
